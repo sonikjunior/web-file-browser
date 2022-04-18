@@ -19,6 +19,7 @@
         <kotlin.version>1.6.10</kotlin.version>
         <openapi.plugin.version>5.4.0</openapi.plugin.version>
         <default.package>org.khasbatov.homework</default.package>
+        <start-class>org.khasbatov.homework.BackendApplication</start-class>
     </properties>
 
     <dependencies>
@@ -105,6 +106,7 @@
                             <generatorName>kotlin-spring</generatorName>
                             <modelNameSuffix>Dto</modelNameSuffix>
                             <configOptions>
+                                <interfaceOnly>true</interfaceOnly>
                                 <basePackage>${default.package}</basePackage>
                                 <apiPackage>${default.package}.controller</apiPackage>
                                 <modelPackage>${default.package}.model</modelPackage>

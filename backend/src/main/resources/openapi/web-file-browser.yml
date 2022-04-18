@@ -5,12 +5,12 @@ info:
   version: 1.0.0
 
 paths:
-  /childs:
+  /child:
     post:
       tags:
         - comment
-      summary: getChilds
-      description: Operation gets all childs of directory or archive
+      summary: getChildren
+      description: Operation gets all children of directory or archive
       operationId: getChilds
       requestBody:
         required: true
