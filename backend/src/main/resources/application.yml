@@ -1,0 +1,6 @@
+extensions:
+  archive: zip, rar
+  picture: jpeg, jpg, png, bmp
+  document: txt, doc, docx, xls, pdf, csv
+allowed-unzipping-formats: zip
+forbidden-unzipping-formats: rar

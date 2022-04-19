@@ -1,5 +1,7 @@
 package org.khasbatov.homework.error
 
+import org.khasbatov.homework.error.exception.FileNotFoundException
+import org.khasbatov.homework.error.exception.ForbiddenArchiveException
 import org.khasbatov.homework.model.ErrorResponseDto
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -12,6 +14,13 @@ class ExceptionHandlerAdvice {
 
     @ExceptionHandler
     fun invocationException(e: RuntimeException): ResponseEntity<ErrorResponseDto> {
-        return status(HttpStatus.UNPROCESSABLE_ENTITY).body(ErrorResponseDto("File not found"))
+        return when (e) {
+            is FileNotFoundException -> buildError(HttpStatus.UNPROCESSABLE_ENTITY, "File not found")
+            is ForbiddenArchiveException -> buildError(HttpStatus.FORBIDDEN, "Forbidden archive's extension")
+            else -> buildError(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong")
+        }
     }
+
+    private fun buildError(httpStatus: HttpStatus, message: String) =
+        status(httpStatus).body(ErrorResponseDto(message))
 }

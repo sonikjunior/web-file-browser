@@ -70,7 +70,7 @@ components:
         type:
           description: Type
           type: string
-          enum: [ file, directory, archive ]
+          enum: [ file, directory, archive, picture, document ]
           example: directory
 
     Path:

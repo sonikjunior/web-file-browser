@@ -5,7 +5,5 @@ target/generated-sources/openapi/**/application.properties
 target/generated-sources/openapi/**/OpenAPI2SpringBoot.java
 target/generated-sources/openapi/**/RFC3339DateFormat.java
 target/generated-sources/openapi/**/configuration/*
-target/generated-sources/openapi/src/main/resources/**
-target/generated-sources/openapi/src/test/**
 target/generated-sources/openapi/build.gradle.kts
 target/generated-sources/openapi/settings.gradle
