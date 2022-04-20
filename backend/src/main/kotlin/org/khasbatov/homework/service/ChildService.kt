@@ -1,44 +1,56 @@
 package org.khasbatov.homework.service
 
-import org.khasbatov.homework.error.exception.FileNotFoundException
-import org.khasbatov.homework.error.exception.ForbiddenArchiveException
+import org.khasbatov.homework.error.FileValidator
 import org.khasbatov.homework.model.FileInfoDto
-import org.khasbatov.homework.util.*
+import org.khasbatov.homework.config.AppConfig
+import org.khasbatov.homework.helper.UnzipHelper
 import org.springframework.stereotype.Service
 import java.io.File
+import java.io.File.separator
+import java.nio.file.Files
 
 @Service
 class ChildService(
-    private val appProps: AppProps
+    private val appConfig: AppConfig,
+    private val unzipHelper: UnzipHelper,
+    private val fileValidator: FileValidator
 ) {
 
     fun getByPath(path: String): List<FileInfoDto> {
         val file = File(path)
-        if (!file.exists()) throw FileNotFoundException()
+        fileValidator.validate(file)
 
-
-        if (file.isArchive()) {
-            if (file.isForbiddenArchive()) throw ForbiddenArchiveException()
-            if (file.isAllowedArchive()) {
-                // walk inside archive
-            }
-        }
-
-        val result = ArrayList<FileInfoDto>()
         if (file.isDirectory) {
-            file.walk()
-                .maxDepth(1)
-                .filter { !it.absolutePath.equals(path) }
-                .forEach {
-                    result.add(
-                        FileInfoDto(
-                            it.absolutePath,
-                            it.name,
-                            defineType(it)
-                        )
-                    )
-                }
+            return walk(file)
         }
+
+        if (file.isAllowedArchive()) {
+            val unzipDirName = file.pureName()
+            val unzipDirFile = File(file.parent + separator + unzipDirName)
+
+            if (!unzipDirFile.exists()) {
+                Files.createDirectory(unzipDirFile.toPath())
+                unzipHelper.unzip(file, unzipDirFile.path)
+            }
+            return walk(unzipDirFile)
+        }
+        return emptyList()
+    }
+
+    private fun walk(file: File): ArrayList<FileInfoDto> {
+        val result = ArrayList<FileInfoDto>()
+        file.walk()
+            .maxDepth(1)
+            .filter { it.absolutePath != file.absolutePath }
+            .forEach {
+                result.add(
+                    FileInfoDto(
+                        it.absolutePath,
+                        it.name,
+                        defineType(it)
+                    )
+                )
+            }
         return result
     }
 
@@ -52,9 +64,9 @@ class ChildService(
         }
     }
 
-    private fun File.isArchive() = appProps.archiveExtensions.contains(extension)
-    private fun File.isPicture() = appProps.pictureExtensions.contains(extension)
-    private fun File.isDocument() = appProps.documentExtensions.contains(extension)
-    private fun File.isAllowedArchive() = appProps.allowedUnzippingFormats.contains(extension)
-    private fun File.isForbiddenArchive() = appProps.forbiddenUnzippingFormats.contains(extension)
+    private fun File.pureName() = name.dropLast(extension.length + 1)
+    private fun File.isArchive() = appConfig.archiveExtensions.contains(extension)
+    private fun File.isPicture() = appConfig.pictureExtensions.contains(extension)
+    private fun File.isDocument() = appConfig.documentExtensions.contains(extension)
+    private fun File.isAllowedArchive() = isArchive() && appConfig.allowedUnzippingFormats.contains(extension)
 }

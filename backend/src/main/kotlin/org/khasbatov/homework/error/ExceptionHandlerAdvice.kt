@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 class ExceptionHandlerAdvice {
 
     @ExceptionHandler
-    fun invocationException(e: RuntimeException): ResponseEntity<ErrorResponseDto> {
+    fun invocationException(e: Exception): ResponseEntity<ErrorResponseDto> {
         return when (e) {
             is FileNotFoundException -> buildError(HttpStatus.UNPROCESSABLE_ENTITY, "File not found")
-            is ForbiddenArchiveException -> buildError(HttpStatus.FORBIDDEN, "Forbidden archive's extension")
+            is ForbiddenArchiveException -> buildError(HttpStatus.UNPROCESSABLE_ENTITY, "Forbidden archive's extension")
             else -> buildError(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong")
         }
     }

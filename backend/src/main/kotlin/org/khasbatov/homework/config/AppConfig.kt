@@ -1,10 +1,10 @@
-package org.khasbatov.homework.util
+package org.khasbatov.homework.config
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
 @Component
-class AppProps {
+class AppConfig {
     @Value("\${extensions.archive}") lateinit var archiveExtensions: Set<String>
     @Value("\${extensions.picture}") lateinit var pictureExtensions: Set<String>
     @Value("\${extensions.document}") lateinit var documentExtensions: Set<String>
