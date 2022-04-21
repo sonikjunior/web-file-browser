@@ -1,13 +1,14 @@
 package org.khasbatov.homework.service
 
-import org.khasbatov.homework.error.FileValidator
-import org.khasbatov.homework.model.FileInfoDto
 import org.khasbatov.homework.config.AppConfig
+import org.khasbatov.homework.error.FileValidator
 import org.khasbatov.homework.helper.UnzipHelper
+import org.khasbatov.homework.model.FileInfoDto
 import org.springframework.stereotype.Service
 import java.io.File
 import java.io.File.separator
 import java.nio.file.Files
+import java.util.stream.Collectors
 
 @Service
 class ChildService(
@@ -17,7 +18,11 @@ class ChildService(
 ) {
 
     fun getByPath(path: String): List<FileInfoDto> {
-        val file = File(path)
+        var updatedPath = path
+        if (path.hasArchive()) {
+            updatedPath = swapPathForArchives(path)
+        }
+        val file = File(updatedPath)
         fileValidator.validate(file)
 
         if (file.isDirectory) {
@@ -25,19 +30,40 @@ class ChildService(
         }
 
         if (file.isAllowedArchive()) {
-            val unzipDirName = file.pureName()
+            val unzipDirName = "_" + file.name
             val unzipDirFile = File(file.parent + separator + unzipDirName)
 
             if (!unzipDirFile.exists()) {
                 Files.createDirectory(unzipDirFile.toPath())
                 unzipHelper.unzip(file, unzipDirFile.path)
             }
-            return walk(unzipDirFile)
+            return walk(unzipDirFile, unzipDirName, file.name)
         }
         return emptyList()
     }
 
-    private fun walk(file: File): ArrayList<FileInfoDto> {
+    private fun swapPathForArchives(path: String) : String {
+        val paths = path.split(separator).toMutableList()
+        val indexesForReplace = ArrayList<Int>()
+        paths.forEachIndexed{ index, value ->
+            run {
+                appConfig.allowedUnzippingFormats.forEach { zipFormat ->
+                    run {
+                        if (value.contains(zipFormat)) {
+                            indexesForReplace.add(index)
+                        }
+                    }
+                }
+            }
+        }
+        indexesForReplace.forEach {
+            val zipFileName = paths[it].toString()
+            paths[it] = zipFileName.replace(zipFileName, "_$zipFileName")
+        }
+        return paths.stream().collect(Collectors.joining(separator))
+    }
+
+    private fun walk(file: File, unzipDirName: String = "", zipName: String = ""): ArrayList<FileInfoDto> {
         val result = ArrayList<FileInfoDto>()
         file.walk()
             .maxDepth(1)
@@ -45,7 +71,7 @@ class ChildService(
             .forEach {
                 result.add(
                     FileInfoDto(
-                        it.absolutePath,
+                        it.absolutePath.replace(unzipDirName, zipName),
                         it.name,
                         defineType(it)
                     )
@@ -64,9 +90,16 @@ class ChildService(
         }
     }
 
-    private fun File.pureName() = name.dropLast(extension.length + 1)
+    private fun String.hasArchive(): Boolean {
+        var result = false
+        appConfig.allowedUnzippingFormats.forEach {
+            if (this.contains(it)) result = true
+        }
+        return result
+    }
+
     private fun File.isArchive() = appConfig.archiveExtensions.contains(extension)
     private fun File.isPicture() = appConfig.pictureExtensions.contains(extension)
     private fun File.isDocument() = appConfig.documentExtensions.contains(extension)
-    private fun File.isAllowedArchive() = isArchive() && appConfig.allowedUnzippingFormats.contains(extension)
+    private fun File.isAllowedArchive() = appConfig.allowedUnzippingFormats.contains(extension)
 }
