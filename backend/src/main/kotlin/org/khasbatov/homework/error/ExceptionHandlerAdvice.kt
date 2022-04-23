@@ -1,5 +1,6 @@
 package org.khasbatov.homework.error
 
+import org.khasbatov.homework.error.exception.FileIsNotFolderException
 import org.khasbatov.homework.error.exception.FileNotFoundException
 import org.khasbatov.homework.error.exception.ForbiddenArchiveException
 import org.khasbatov.homework.model.ErrorResponseDto
@@ -20,6 +21,7 @@ class ExceptionHandlerAdvice {
         return when (e) {
             is FileNotFoundException -> buildError(UNPROCESSABLE_ENTITY, "File not found")
             is ForbiddenArchiveException -> buildError(UNPROCESSABLE_ENTITY, "Unsupported archive's extension")
+            is FileIsNotFolderException -> buildError(UNPROCESSABLE_ENTITY, "File is not folder")
             is IOException -> buildError(INTERNAL_SERVER_ERROR, "Some problems while unzipping or reading files")
             else -> buildError(INTERNAL_SERVER_ERROR, "Something went wrong")
         }

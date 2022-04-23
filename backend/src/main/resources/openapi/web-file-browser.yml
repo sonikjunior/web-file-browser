@@ -5,27 +5,58 @@ info:
   version: 1.0.0
 
 paths:
-  /child:
+  /folder/content:
     post:
       tags:
-        - comment
-      summary: getChildren
-      description: Operation gets all children of directory or archive
-      operationId: getChilds
+        - folder
+      summary: getContent
+      description: Operation gets all children of directory
+      operationId: getContent
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/GetFileRequest'
+              $ref: '#/components/schemas/FileRequest'
       responses:
         200:
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetFilesResponse'
+                $ref: '#/components/schemas/ContentResponse'
         400:
+          $ref: '#/components/responses/Error'
+        404:
+          $ref: '#/components/responses/Error'
+        422:
+          $ref: '#/components/responses/Error'
+        500:
+          $ref: '#/components/responses/Error'
+
+  /archive/unzip:
+    post:
+      tags:
+        - archive
+      summary: unzipArchive
+      description: Operation unzips archive
+      operationId: unzipArchive
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FileRequest'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileResponse'
+        400:
+          $ref: '#/components/responses/Error'
+        404:
           $ref: '#/components/responses/Error'
         422:
           $ref: '#/components/responses/Error'
@@ -45,7 +76,7 @@ components:
 
   schemas:
 
-    GetFileRequest:
+    FileRequest:
       type: object
       required:
         - path
@@ -53,7 +84,7 @@ components:
         path:
           $ref: '#/components/schemas/Path'
 
-    FileInfo:
+    FileResponse:
       description: File information
       type: object
       required:
@@ -70,7 +101,7 @@ components:
         type:
           description: Type
           type: string
-          enum: [ file, directory, archive, picture, document ]
+          enum: [ file, folder, archive, picture, document ]
           example: directory
 
     Path:
@@ -78,10 +109,10 @@ components:
       type: string
       example: "Users/i.ivanov/Documents/work"
 
-    GetFilesResponse:
+    ContentResponse:
       type: array
       items:
-        $ref: '#/components/schemas/FileInfo'
+        $ref: '#/components/schemas/FileResponse'
 
     ErrorResponse:
       description: Error with message
