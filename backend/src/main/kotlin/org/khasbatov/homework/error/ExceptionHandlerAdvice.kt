@@ -5,8 +5,7 @@ import org.khasbatov.homework.error.exception.FileNotFoundException
 import org.khasbatov.homework.error.exception.ForbiddenArchiveException
 import org.khasbatov.homework.model.ErrorResponseDto
 import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
-import org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY
+import org.springframework.http.HttpStatus.*
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.status
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -19,7 +18,7 @@ class ExceptionHandlerAdvice {
     @ExceptionHandler
     fun invocationException(e: Exception): ResponseEntity<ErrorResponseDto> {
         return when (e) {
-            is FileNotFoundException -> buildError(UNPROCESSABLE_ENTITY, "File not found")
+            is FileNotFoundException -> buildError(NOT_FOUND, "File not found")
             is ForbiddenArchiveException -> buildError(UNPROCESSABLE_ENTITY, "Unsupported archive's extension")
             is FileIsNotFolderException -> buildError(UNPROCESSABLE_ENTITY, "File is not folder")
             is IOException -> buildError(INTERNAL_SERVER_ERROR, "Some problems while unzipping or reading files")
