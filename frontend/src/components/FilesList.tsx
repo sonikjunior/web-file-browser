@@ -1,11 +1,12 @@
 import React from 'react';
-import {FileDto, Props} from '../dto/FileDto'
+import '../App.css';
+import {FileDto, Props} from '../dto/FileDto';
 import File from "./File";
 
 const FilesList = (props: Props) => {
     return (
         <div>
-            <ul>
+            <ul className="files-list">
                 {props.files.map((file: FileDto) =>
                     (<File
                         path={file.path}

@@ -8,8 +8,10 @@ const App = () => {
 
     useEffect(() => {
         getFolderContent("/")
-            .then(response => setFiles(response));
-    })
+            .then(response => {
+                setFiles(response);
+            });
+    }, []);
 
     return <FilesList files={files}/>
 }
