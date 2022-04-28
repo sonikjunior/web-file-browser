@@ -29,7 +29,7 @@ class FolderService(
                     )
                 )
             }
-        return content
+        return content.sortedBy { it.name }
     }
 
     private fun defineType(file: File): FileResponseDto.Type {
