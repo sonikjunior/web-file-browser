@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import '../App.css';
-import {FileDto} from "../dto/FileDto";
+import {ChildProps, FileDto} from "../dto/FileDto";
 import FilesList from "./FilesList";
 import {getFolderContent, unzipArchive} from "../api/fileBrowserApi";
 import doc from "../img/file-lines-regular.svg";
@@ -20,17 +20,24 @@ const resolveType = (type: string) => {
     }
 }
 
-const File = (file: FileDto) => {
+const File = (childProps: ChildProps) => {
+    const [isLoaded, setIsLoaded] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
-    const [files, setFiles] = useState([]);
+    const [childFiles, setChildFiles] = useState([]);
+
+    let {file, setListState} = childProps
 
     const fileClickHandler = (file: FileDto) => {
         if (file.type === 'archive') {
-            unzipArchive(file.path);
+            unzipArchive(file.path)
+                .then(unzippedFolder => setListState(unzippedFolder));
         }
         if (file.type === 'folder') {
             setIsExpanded((expanded) => !expanded);
-            getFolderContent(file.path).then(response => setFiles(response));
+            getFolderContent(file.path).then(folderContent => {
+                setChildFiles(folderContent);
+                setIsLoaded(true)
+            });
         }
     }
 
@@ -42,10 +49,10 @@ const File = (file: FileDto) => {
                     {file.name}
                 </div>
             </div>
-            {file.type === 'folder' && isExpanded && (
+            {file.type === 'folder' && isExpanded && isLoaded && (
                 <div>
                     <ul>
-                        <FilesList files={files}/>
+                        <FilesList files={childFiles}/>
                     </ul>
                 </div>
             )}

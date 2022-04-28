@@ -5,15 +5,17 @@ import {getFolderContent} from "./api/fileBrowserApi";
 
 const App = () => {
     const [files, setFiles] = useState([]);
+    const [isLoaded, setIsLoaded] = useState(false);
 
     useEffect(() => {
         getFolderContent("/")
             .then(response => {
                 setFiles(response);
+                setIsLoaded(true);
             });
     }, []);
 
-    return <FilesList files={files}/>
+    return (isLoaded ? <FilesList files={files}/> : <p>Loading</p>);
 }
 
 export default App;
