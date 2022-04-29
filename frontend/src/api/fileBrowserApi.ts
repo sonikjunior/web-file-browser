@@ -5,8 +5,7 @@ export const getFolderContent = (path: string) =>
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({path})
-        }
-    ).then((resp) => resp.json());
+        }).then(handleResponse);
 
 export const unzipArchive = (path: string) =>
     fetch(
@@ -15,6 +14,16 @@ export const unzipArchive = (path: string) =>
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({path})
-        }
-    ).then((resp) => resp.json());
+        }).then(handleResponse);
 
+const handleResponse = (resp: Response) => {
+    if (resp.status >= 200 && resp.status <= 299) {
+        return resp.json()
+    } else {
+        return resp.text().then(text => {
+            const msg = JSON.parse(text).message;
+            alert(msg)
+            throw Error(msg)
+        });
+    }
+}
