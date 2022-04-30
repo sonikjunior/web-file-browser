@@ -1,20 +1,21 @@
 import React, {useState} from 'react';
 import '../App.css';
-import {FileDto, Props} from '../dto/FileDto';
+import {FileProps, Props} from '../dto/FileProps';
 import File from "./File";
 
 const FilesList = (props: Props) => {
     const [files, setFiles] = useState(props.files);
 
-    const setListState = (newFile: FileDto) => {
+    const setListState = (newFile: FileProps) => {
         setFiles([...files, newFile])
     }
 
     return (
             <div>
                 <ul className="files-list">
-                    {files.map((file: FileDto) =>
+                    {files.map((file: FileProps) =>
                         (<File
+                            key={file.path}
                             file={file}
                             setListState={setListState}
                         />)

@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import '../App.css';
-import {ChildProps, FileDto} from "../dto/FileDto";
+import {ChildProps, FileProps} from "../dto/FileProps";
+import {addFilesToCache} from "../helper/sessionCacheHelper";
 import FilesList from "./FilesList";
 import {getFolderContent, unzipArchive} from "../api/fileBrowserApi";
 import doc from "../img/file-lines-regular.svg";
@@ -27,7 +28,7 @@ const File = (childProps: ChildProps) => {
 
     let {file, setListState} = childProps
 
-    const fileClickHandler = (file: FileDto) => {
+    const fileClickHandler = (file: FileProps) => {
         if (file.type === 'archive') {
             unzipArchive(file.path)
                 .then(unzippedFolder => setListState(unzippedFolder));
@@ -35,6 +36,7 @@ const File = (childProps: ChildProps) => {
         if (file.type === 'folder') {
             setIsExpanded((expanded) => !expanded);
             getFolderContent(file.path).then(folderContent => {
+                addFilesToCache(file.path, folderContent)
                 setChildFiles(folderContent);
                 setIsLoaded(true)
             });
