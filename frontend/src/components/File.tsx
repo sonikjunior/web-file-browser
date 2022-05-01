@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import '../App.css';
 import {ChildProps, FileProps} from "../dto/FileProps";
-import {addFilesToCache, addFileToParentToCache} from "../helper/sessionCacheHelper";
+import {addFilesToCache, addFileToParentCache, deleteFileFromCache} from "../helper/sessionCacheHelper";
 import FilesList from "./FilesList";
 import {getFolderContent, unzipArchive} from "../api/fileBrowserApi";
 import doc from "../img/file-lines-regular.svg";
@@ -43,18 +43,22 @@ const File = (childProps: ChildProps) => {
         if (file.type === 'archive') {
             unzipArchive(file.path)
                 .then(unzippedFolder => {
-                    addFileToParentToCache(unzippedFolder);
+                    addFileToParentCache(unzippedFolder);
                     updateParentState(unzippedFolder);
                 });
         }
         if (file.type === 'folder') {
-            getFolderContent(file.path)
-                .then(folderContent => {
-                    addFilesToCache(file.path, folderContent);
-                    setChildFiles(folderContent);
-                    setIsLoaded(true);
-                });
-            setIsExpanded((expanded) => !expanded);
+            if (!isExpanded) {
+                getFolderContent(file.path)
+                    .then(folderContent => {
+                        addFilesToCache(file.path, folderContent);
+                        setChildFiles(folderContent);
+                        setIsLoaded(true);
+                    });
+            } else {
+                deleteFileFromCache(file)
+            }
+            setIsExpanded(!isExpanded);
         }
     }
 

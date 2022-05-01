@@ -14,5 +14,5 @@ export interface FileProps {
 }
 
 export interface FileCacheProps extends FileProps {
-    content?: FileCacheProps[]
+    content?: FileCacheProps[] | null
 }
