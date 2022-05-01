@@ -1,10 +1,10 @@
 export interface Props {
-    files: FileProps[]
+    files: FileCacheProps[]
 }
 
 export interface ChildProps {
-    file: FileProps
-    setListState: Function
+    file: FileCacheProps
+    updateParentState: Function
 }
 
 export interface FileProps {

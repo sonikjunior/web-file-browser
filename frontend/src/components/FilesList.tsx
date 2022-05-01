@@ -6,7 +6,7 @@ import File from "./File";
 const FilesList = (props: Props) => {
     const [files, setFiles] = useState(props.files);
 
-    const setListState = (newFile: FileProps) => {
+    const updateState = (newFile: FileProps) => {
         setFiles([...files, newFile])
     }
 
@@ -17,7 +17,7 @@ const FilesList = (props: Props) => {
                         (<File
                             key={file.path}
                             file={file}
-                            setListState={setListState}
+                            updateParentState={updateState}
                         />)
                     )}
                 </ul>

@@ -1,7 +1,7 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import '../App.css';
 import {ChildProps, FileProps} from "../dto/FileProps";
-import {addFilesToCache} from "../helper/sessionCacheHelper";
+import {addFilesToCache, addFileToParentToCache} from "../helper/sessionCacheHelper";
 import FilesList from "./FilesList";
 import {getFolderContent, unzipArchive} from "../api/fileBrowserApi";
 import doc from "../img/file-lines-regular.svg";
@@ -26,20 +26,35 @@ const File = (childProps: ChildProps) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const [childFiles, setChildFiles] = useState([]);
 
-    let {file, setListState} = childProps
+    let {file, updateParentState} = childProps
+
+    useEffect(() => {
+        // check the cache
+        if (childProps.file.content) {
+            const children = file.content
+            // @ts-ignore
+            setChildFiles(children);
+            setIsLoaded(true)
+            setIsExpanded((expanded) => !expanded)
+        }
+    }, [])
 
     const fileClickHandler = (file: FileProps) => {
         if (file.type === 'archive') {
             unzipArchive(file.path)
-                .then(unzippedFolder => setListState(unzippedFolder));
+                .then(unzippedFolder => {
+                    addFileToParentToCache(unzippedFolder);
+                    updateParentState(unzippedFolder);
+                });
         }
         if (file.type === 'folder') {
+            getFolderContent(file.path)
+                .then(folderContent => {
+                    addFilesToCache(file.path, folderContent);
+                    setChildFiles(folderContent);
+                    setIsLoaded(true);
+                });
             setIsExpanded((expanded) => !expanded);
-            getFolderContent(file.path).then(folderContent => {
-                addFilesToCache(file.path, folderContent)
-                setChildFiles(folderContent);
-                setIsLoaded(true)
-            });
         }
     }
 
