@@ -4,22 +4,9 @@ import {ChildProps, FileProps} from "../dto/FileProps";
 import {addFilesToCache, addFileToParentCache, deleteFileFromCache} from "../helper/sessionCacheHelper";
 import FilesList from "./FilesList";
 import {getFolderContent, unzipArchive} from "../api/fileBrowserApi";
-import doc from "../img/file-lines-regular.svg";
-import file from "../img/file-regular.svg";
-import folder from "../img/folder-regular.svg";
-import picture from "../img/image-regular.svg";
-import archive from "../img/file-zipper-regular.svg";
+import {resolveType} from "../helper/imageHelper";
+import arrow from "../img/angle-right-solid.svg";
 
-
-const resolveType = (type: string) => {
-    switch (type) {
-        case 'folder': return folder
-        case 'archive': return archive
-        case 'document': return doc
-        case 'picture': return picture
-        default: return file
-    }
-}
 
 const File = (childProps: ChildProps) => {
     const [isLoaded, setIsLoaded] = useState(false);
@@ -66,7 +53,12 @@ const File = (childProps: ChildProps) => {
         <li>
             <div onClick={() => fileClickHandler(file)}>
                 <div>
-                    <img src={resolveType(file.type)} alt={""} className="image"/>
+                    {file.type === 'folder' &&
+                        <img src={arrow} alt="arrow-right"
+                             className={`arrow ${isExpanded ? "active" : ""}`}/>}
+
+                    <img src={resolveType(file.type)} alt="arrow-right"
+                         className={`image ${file.type !== 'folder' ? "not-folder" : ""}`}/>
                     {file.name}
                 </div>
             </div>
