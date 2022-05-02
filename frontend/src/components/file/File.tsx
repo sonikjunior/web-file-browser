@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from "react";
-import '../App.css';
-import {ChildProps, FileProps} from "../dto/FileProps";
-import {addFilesToCache, addFileToParentCache, deleteFileFromCache} from "../helper/sessionCacheHelper";
-import FilesList from "./FilesList";
-import {getFolderContent, unzipArchive} from "../api/fileBrowserApi";
-import {resolveType} from "../helper/imageHelper";
-import arrow from "../img/angle-right-solid.svg";
+import './File.css';
+import {ChildProps, FileProps} from "../../dto/FileProps";
+import {addFilesToCache, addFileToParentCache, deleteFileFromCache} from "../../helper/sessionCacheHelper";
+import FilesList from "../fileList/FilesList";
+import {getFolderContent, unzipArchive} from "../../api/fileBrowserApi";
+import {resolveType} from "../../helper/imageHelper";
+import arrow from "../../img/angle-right-solid.svg";
 
 
 const File = (childProps: ChildProps) => {

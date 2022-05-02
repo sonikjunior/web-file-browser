@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import './App.css';
-import FilesList from "./components/FilesList";
+import './components/file/File.css';
+import FilesList from "./components/fileList/FilesList";
 import {getFolderContent} from "./api/fileBrowserApi";
 import {addFilesToCache, getFileFromCache, initCache, isCacheEmpty} from "./helper/sessionCacheHelper";
 
