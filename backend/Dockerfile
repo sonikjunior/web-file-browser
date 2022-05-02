@@ -1,8 +1,7 @@
 # build stage
 FROM maven:3.8.5-openjdk-11-slim as build
-RUN mkdir -p workspace
-WORKDIR workspace
-COPY . /workspace
+WORKDIR /workspace
+COPY . ./
 RUN mvn -Dmaven.test.skip package
 
 # run stage
