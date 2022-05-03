@@ -2,7 +2,7 @@
 FROM maven:3.8.5-openjdk-11-slim as build
 WORKDIR /workspace
 COPY . ./
-RUN mvn -Dmaven.test.skip package
+RUN mvn --quiet -Dmaven.test.skip package
 
 # run stage
 FROM eclipse-temurin:11.0.15_10-jre-alpine
