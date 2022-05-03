@@ -4,16 +4,18 @@ import FilesList from "./components/fileList/FilesList";
 import {getFolderContent} from "./api/fileBrowserApi";
 import {addFilesToCache, getFileFromCache, initCache, isCacheEmpty} from "./helper/sessionCacheHelper";
 
+const root = '/'
+
 const App = () => {
     const [files, setFiles] = useState([]);
     const [isLoaded, setIsLoaded] = useState(false);
 
     useEffect(() => {
         if (isCacheEmpty()) {
-            getFolderContent("/")
+            getFolderContent(root)
                 .then(response => {
-                    initCache({path: '/', name: '/', type: 'folder'})
-                    addFilesToCache('/', response)
+                    initCache({path: root, name: root, type: 'folder'})
+                    addFilesToCache(root, response)
                     setFiles(response);
                     setIsLoaded(true);
                 });
@@ -24,11 +26,7 @@ const App = () => {
         }
     }, []);
 
-    return (isLoaded ?
-        <FilesList
-            files={files}
-        /> : <p>Loading</p>);
-
+    return (isLoaded ? <FilesList files={files}/> : <p>Loading</p>);
 }
 
 export default App;

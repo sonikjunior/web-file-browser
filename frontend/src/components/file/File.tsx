@@ -22,7 +22,7 @@ const File = (childProps: ChildProps) => {
             // @ts-ignore
             setChildFiles(children);
             setIsLoaded(true)
-            setIsExpanded((expanded) => !expanded)
+            setIsExpanded(!isExpanded)
         }
     }, [])
 

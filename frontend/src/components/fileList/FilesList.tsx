@@ -4,10 +4,6 @@ import {FileProps, Props} from '../../dto/FileProps';
 import File from "../file/File";
 
 const FilesList = (props: Props) => {
-
-    console.log(props)
-    console.log(props.files)
-
     const [files, setFiles] = useState(props.files);
 
     const updateState = (newFile: FileProps) => {
